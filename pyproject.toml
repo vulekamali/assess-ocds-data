@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "assess-ocds-data"
+version = "0.1.0"
+description = ""
+authors = ["JD Bothma <jbothma@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "assess_ocds_data"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+hvplot = "^0.8.3"
+panel = "^0.14.4"
+pandas = "^1.5.3"
+jupyterlab = "^3.6.2"
+psycopg2 = "^2.9.5"
+sqlalchemy = "^2.0.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
