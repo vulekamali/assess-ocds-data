@@ -22,8 +22,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
 
       const svg = container.select("svg")
         .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .style("border", "solid");
+        .attr("height", height + margin.top + margin.bottom);
 
       const plotArea = svg.select(".plot-area")
         .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -32,7 +31,8 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
       // Build X scales and axis:
       const x = d3.scaleBand()
         .range([0, plotWidth])
-        .domain(cols);
+        .domain(cols)
+        .padding(0.05);
       svg.select(".x-axis")
         .attr("transform", `translate(${margin.left}, ${plotHeight + margin.top})`)
         .call(d3.axisBottom(x))
@@ -40,10 +40,11 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
       // Build y scales and axis:
       const y = d3.scaleBand()
         .range([plotHeight, 0])
-        .domain(rows.reverse());
+        .domain(rows.reverse())
+        .padding(0.05);
       svg.select(".y-axis")
         .call(d3.axisLeft(y))
-        .attr("transform", `translate(${margin.left}, ${ margin.top})`);
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
       const values = data.map((d) => d[valKey]);
       const max = d3.max(values);
@@ -64,8 +65,8 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
       var mousemove = function (e, d) {
         tooltip
           .html(`${d[rowKey]}<br>${d[colKey]}<br><b>${d[valKey]}`)
-          .style("left", (x(d[colKey]) + margin.left + 1.5 * squareSize) + "px")
-          .style("top", (y(d[rowKey])) + "px");
+          .style("left", (x(d[colKey]) + margin.left + 0.5 * squareSize) + "px")
+          .style("top", (y(d[rowKey]) - squareSize - 10) + "px");
       };
       var mouseleave = function (e, d) {
         tooltip.style("display", "none")
@@ -81,8 +82,8 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
         .style("fill", function (d) { return myColor(d[valKey]) })
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave);
-
+        .on("mouseleave", mouseleave)
+        .exit().remove();
     },
     []
   );

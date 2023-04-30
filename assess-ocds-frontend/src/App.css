@@ -1,3 +1,7 @@
+.container {
+  position: relative;
+}
+
 .tooltip {
   display: none;
   background-color: white;
