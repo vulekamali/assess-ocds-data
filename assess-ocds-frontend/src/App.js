@@ -2,6 +2,8 @@ import './App.css';
 import monthCounts from './month_counts.json';
 import Heatmap from './Heapmap';
 
+monthCounts.reverse();
+
 function App() {
   return (
     <div className="App">

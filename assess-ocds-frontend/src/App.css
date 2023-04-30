@@ -1,0 +1,9 @@
+.tooltip {
+  display: none;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+  position: absolute;
+  width: 200px;
+  pointer-events: none; /* avoid flickering when mouse briefly moves over tooltip */
+}
