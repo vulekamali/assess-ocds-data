@@ -11,6 +11,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <p>This shows the number of procurement processes available for each organ of state by month at <a href="https://data.etenders.gov.za/">https://data.etenders.gov.za/</a></p>
+        <p>Data is only available if an organ of state uploaded the data to the eTender portal. Data queries should be directed first to the respective organ of state, before reaching out to the OCPO.</p>
+        <p>Last updated 2023-03-25 13:14:19</p>
         <Section heading="National departments" data={nationalDepartment} />
         <Section heading="Provincial departments" data={provincialDepartment} />
         <Section heading="Municipalities" data={municipal} />
