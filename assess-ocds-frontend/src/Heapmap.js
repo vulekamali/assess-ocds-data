@@ -16,16 +16,18 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
       const squareSize = 40;
       const plotWidth = cols.length * squareSize;
       const plotHeight = rows.length * squareSize;
-      const margin = { top: 30, right: 30, bottom: 30, left: 200 },
-        width = plotWidth + margin.left + margin.right,
-        height = plotHeight + margin.top + margin.bottom;
+      const yAxisWidth = 170;
+      const xAxisHeight = 50;
+      const margin = 30,
+        width = plotWidth + margin*2 + yAxisWidth,
+        height = plotHeight + margin*2 + xAxisHeight*2;
 
       const svg = container.select("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+        .attr("width", width)
+        .attr("height", height);
 
       const plotArea = svg.select(".plot-area")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        .attr("transform", `translate(${margin + yAxisWidth}, ${margin})`);
 
 
       // Build X scales and axis:
@@ -34,7 +36,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
         .domain(cols)
         .padding(0.05);
       svg.select(".x-axis")
-        .attr("transform", `translate(${margin.left}, ${plotHeight + margin.top})`)
+        .attr("transform", `translate(${margin + yAxisWidth}, ${plotHeight + margin})`)
         .call(d3.axisBottom(x))
 
       // Build y scales and axis:
@@ -44,7 +46,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
         .padding(0.05);
       svg.select(".y-axis")
         .call(d3.axisLeft(y))
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        .attr("transform", `translate(${margin + yAxisWidth}, ${margin})`);
 
       const values = data.map((d) => d[valKey]);
       const max = d3.max(values);
@@ -65,7 +67,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
       var mousemove = function (e, d) {
         tooltip
           .html(`${d[rowKey]}<br>${d[colKey]}<br><b>${d[valKey]}`)
-          .style("left", (x(d[colKey]) + margin.left + 0.5 * squareSize) + "px")
+          .style("left", (x(d[colKey]) + margin + yAxisWidth + 0.5 * squareSize) + "px")
           .style("top", (y(d[rowKey]) - squareSize - 10) + "px");
       };
       var mouseleave = function (e, d) {
