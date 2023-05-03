@@ -17,7 +17,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
       const plotWidth = cols.length * squareSize;
       const plotHeight = rows.length * squareSize;
       const yAxisWidth = 170;
-      const xAxisHeight = 50;
+      const xAxisHeight = 20;
       const margin = 30,
         width = plotWidth + margin*2 + yAxisWidth,
         height = plotHeight + margin*2 + xAxisHeight*2;
@@ -27,7 +27,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
         .attr("height", height);
 
       const plotArea = svg.select(".plot-area")
-        .attr("transform", `translate(${margin + yAxisWidth}, ${margin})`);
+        .attr("transform", `translate(${margin + yAxisWidth}, ${margin + xAxisHeight})`);
 
 
       // Build X scales and axis:
@@ -35,9 +35,15 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
         .range([0, plotWidth])
         .domain(cols)
         .padding(0.05);
-      svg.select(".x-axis")
-        .attr("transform", `translate(${margin + yAxisWidth}, ${plotHeight + margin})`)
-        .call(d3.axisBottom(x))
+
+        svg.select(".x-axis.top")
+        .attr("transform", `translate(${margin + yAxisWidth}, ${margin + xAxisHeight})`)
+        .call(d3.axisTop(x));
+
+
+        svg.select(".x-axis.bottom")
+        .attr("transform", `translate(${margin + yAxisWidth}, ${plotHeight + margin + xAxisHeight})`)
+        .call(d3.axisBottom(x));
 
       // Build y scales and axis:
       const y = d3.scaleBand()
@@ -46,7 +52,7 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
         .padding(0.05);
       svg.select(".y-axis")
         .call(d3.axisLeft(y))
-        .attr("transform", `translate(${margin + yAxisWidth}, ${margin})`);
+        .attr("transform", `translate(${margin + yAxisWidth}, ${margin + xAxisHeight})`);
 
       const values = data.map((d) => d[valKey]);
       const max = d3.max(values);
@@ -93,8 +99,9 @@ function Heatmap({ data, rowKey, colKey, valKey }) {
   return (
     <div ref={ref} className="container">
       <svg>
+        <g className="x-axis top" />
         <g className="plot-area" />
-        <g className="x-axis" />
+        <g className="x-axis bottom" />
         <g className="y-axis" />
       </svg>
       <div className="tooltip"></div>
