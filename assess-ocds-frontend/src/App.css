@@ -11,3 +11,13 @@
   width: 200px;
   pointer-events: none; /* avoid flickering when mouse briefly moves over tooltip */
 }
+
+
+
+.stickyXAxisContainer {
+  position: sticky;
+}
+
+.stickyXAxisContainer svg {
+  position: relative;
+}
