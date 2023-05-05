@@ -37,10 +37,11 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .padding(0.05);
 
       container.select(".stickyXAxisContainer")
-        .style("top", `${margin}px`)
+        .style("top", `0px`)
         .select("svg")
         .attr("width", plotWidth)
         .attr("height", xAxisHeight)
+        .style("top", "32px")
         .style("left", `${margin + yAxisWidth}px`)
         .select(".x-axis.top")
         .attr("transform", `translate(0, ${xAxisHeight - 2})`)
@@ -105,10 +106,6 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .on("mouseleave", mouseleave)
         .exit().remove();
 
-
-      //console.log(stickyXAxisContainer);
-      const options = { transition: 240, offset: 0, ease: "ease-in-out" };
-      //const unstick = makeSticky(container.node(), stickyXAxisContainer.node(), options);
     },
     []
   );
@@ -129,46 +126,4 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       <div className="tooltip"></div>
     </div>
   );
-}
-
-// https://observablehq.com/@mootari/sticky-positioning
-function makeSticky(context, element, { transition = 75, offset = 0, ease = 'ease-in' } = {}) {
-  element.style.position = 'absolute';
-  element.style.transition = `top ${transition}ms ${ease}`;
-
-  return observeViewport((top, bottom) => {
-    const rc = context.getBoundingClientRect();
-    const rs = element.getBoundingClientRect();
-    element.style.top = clamp(0, rc.height - rs.height, top - rc.top + offset) + 'px';
-  });
-}
-
-function observeViewport(callback) {
-  let top = -1, bottom = -1, raf;
-  const observer = new IntersectionObserver(([e]) => {
-    const t = e.intersectionRect.top;
-    const b = e.intersectionRect.bottom;
-    if (t !== top || b !== bottom) {
-      top = t;
-      bottom = b;
-      callback(top, bottom);
-    }
-    observer.unobserve(target);
-    raf = requestAnimationFrame(observe);
-    console.log("observed", target, t, b)
-
-  });
-  const target = document.documentElement;
-  const observe = () => observer.observe(target);
-  observe();
-
-  // Disconnect callback.
-  return () => {
-    cancelAnimationFrame(raf);
-    observer.disconnect();
-  }
-}
-
-function clamp(a, b, v) {
-  return v < a ? a : v > b ? b : v;
 }

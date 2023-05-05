@@ -11,6 +11,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <h1>OCPO Open Contracting data availability</h1>
         <p>This shows the number of procurement processes available for each organ of state by month at <a href="https://data.etenders.gov.za/">https://data.etenders.gov.za/</a></p>
         <p>Data is only available if an organ of state uploaded the data to the eTender portal. Data queries should be directed first to the respective organ of state, before reaching out to the OCPO.</p>
         <p>Last updated 2023-03-25 13:14:19</p>
@@ -25,7 +26,7 @@ function App() {
 
 function Section({ heading, data }) {
   return <>
-    <h1>{heading}</h1>
+    <h2>{heading}</h2>
     <Heatmap data={data} rowKey="buyer_name" colKey="tender_year_month" valKey="count" />
   </>
 }

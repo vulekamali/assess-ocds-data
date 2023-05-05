@@ -1,3 +1,7 @@
+body {
+  padding: 20px
+}
+
 .container {
   position: relative;
 }
@@ -12,10 +16,10 @@
   pointer-events: none; /* avoid flickering when mouse briefly moves over tooltip */
 }
 
-
-
 .stickyXAxisContainer {
   position: sticky;
+  height: 50px;
+  background-color: white;
 }
 
 .stickyXAxisContainer svg {
