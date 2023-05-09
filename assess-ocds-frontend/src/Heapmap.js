@@ -49,7 +49,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .padding(0.05);
 
       const xAxisTickFormat = (value, i) => {
-        return i % 3 === 1 ? d3.timeFormat("%b '%y")(value) : "";
+        return i % 3 === 2 ? d3.timeFormat("%b %Y")(value) : "";
       };
 
       // Create sticky x axis at the top
@@ -132,6 +132,8 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .on("mouseleave", mouseleave)
         .exit().remove();
 
+        const horizontalScrollContainerEl = container.select(".horizontalScrollContainer").node();
+        horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
     },
     []
   );
