@@ -14,17 +14,15 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       const cols = [...new Set(data.map((d) => d.date))];
 
       // Generate values for each month in the range available in the data
-      // and keep the time scale to use for x axes later
-      let xTime = d3.scaleTime()
-        .domain(d3.extent(cols));
-      const filledCols = xTime.ticks(d3.timeMonth);
+      const filledCols = d3.scaleTime()
+        .domain(d3.extent(cols))
+        .ticks(d3.timeMonth);
 
       const rows = [...new Set(data.map((d) => d[rowKey]))];
       rows.sort();
 
       const squareSize = 40;
-      const plotWidth = filledCols.length * squareSize;
-      xTime = xTime.range([0, plotWidth]);
+      const plotWidth = (filledCols.length + 1) * squareSize;
 
       const plotHeight = rows.length * squareSize;
       const yAxisWidth = 170;
@@ -46,29 +44,36 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .domain(filledCols)
         .padding(0.05);
 
+      const xAxisTickFormat = (value, i) => {
+        return i % 3 === 1 ? d3.timeFormat("%b '%y")(value) : "";
+      };
+
       // Create sticky x axis at the top
       container.select(".stickyXAxisContainer")
         .style("top", `0px`)
         .select("svg")
         .attr("width", plotWidth)
-        .attr("height", xAxisHeight)
-        .style("top", "32px")
+        .attr("height", xAxisHeight + margin)
+        .style("top", "0px")
         .style("left", `${margin + yAxisWidth}px`)
         .select(".x-axis.top")
-        .attr("transform", `translate(0, ${xAxisHeight - 2})`)
-        .call(d3.axisTop(xTime)
-          .ticks(d3.timeMonth.every(3)));
+        .attr("transform", `translate(0, ${xAxisHeight - 2 + margin})`)
+        .call(d3.axisTop(xBand)
+          .tickFormat(xAxisTickFormat)
+        );
       container.select(".stickyXAxisContainer")
         .select("svg")
         .select("rect.background")
         .attr("width", plotWidth)
-        .attr("height", xAxisHeight)
+        .attr("height", xAxisHeight + margin)
         .attr("fill", "#fff");
 
       // Create x axis at the bottom
       svg.select(".x-axis.bottom")
         .attr("transform", `translate(${margin + yAxisWidth}, ${plotHeight})`)
-        .call(d3.axisBottom(xTime));
+        .call(d3.axisBottom(xBand)
+          .tickFormat(xAxisTickFormat)
+        );
 
       // Build y scales and axis:
       const y = d3.scaleBand()
@@ -99,7 +104,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         tooltip
           .html(`${d[rowKey]}<br>${d[colKey]}<br><b>${d[valKey]}`)
           .style("left", `${xBand(d.date) + margin + yAxisWidth + 0.5 * squareSize}px`)
-          .style("top", (y(d[rowKey]) - squareSize - 10) + "px");
+          .style("top", (y(d[rowKey]) - squareSize) + "px");
       };
       var mouseleave = function (e, d) {
         tooltip.style("display", "none")
