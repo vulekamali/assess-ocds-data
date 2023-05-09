@@ -34,13 +34,13 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       const svg = container.style("height", `${height}px`)
         .select(".horizontalScrollContainer")
         .style("width", "500px")
-        .style("left", `${yAxisWidth}px`)
+        .style("left", `${yAxisWidth + margin + 1}px`)
         .select("svg.main")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", plotWidth)
+        .attr("height", plotHeight + xAxisHeight*2);
 
       const plotArea = svg.select(".plot-area")
-        .attr("transform", `translate(${margin + yAxisWidth}, 0)`);
+        .attr("transform", `translate(0, 0)`);
 
       // Build x band scale to determine square layout
       const xBand = d3.scaleBand()
@@ -59,7 +59,6 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .attr("width", plotWidth)
         .attr("height", xAxisHeight + margin)
         .style("top", "0px")
-        .style("left", `${margin + yAxisWidth}px`)
         .select(".x-axis.top")
         .attr("transform", `translate(0, ${xAxisHeight - 2 + margin})`)
         .call(d3.axisTop(xBand)
@@ -74,7 +73,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
 
       // Create x axis at the bottom
       svg.select(".x-axis.bottom")
-        .attr("transform", `translate(${margin + yAxisWidth}, ${plotHeight})`)
+        .attr("transform", `translate(0, ${plotHeight})`)
         .call(d3.axisBottom(xBand)
           .tickFormat(xAxisTickFormat)
         );
@@ -86,8 +85,10 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .padding(0.05);
       container.select(".yAxisContainer")
         .select("svg")
-        .attr("width", yAxisWidth)
+        .attr("width", margin + yAxisWidth + 2)
         .attr("height", height)
+        .style("position", "relative")
+        .style("top", `${xAxisHeight + margin}px`)
         .select(".y-axis")
         .call(d3.axisLeft(y))
         .attr("transform", `translate(${margin + yAxisWidth}, 0)`);

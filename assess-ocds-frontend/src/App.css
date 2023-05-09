@@ -35,4 +35,5 @@ body {
 .horizontalScrollContainer {
   position: absolute;
   top: 0px;
+  overflow: auto;
 }
