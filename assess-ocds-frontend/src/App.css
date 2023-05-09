@@ -25,3 +25,14 @@ body {
 .stickyXAxisContainer svg {
   position: relative;
 }
+
+.yAxisContainer {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.horizontalScrollContainer {
+  position: absolute;
+  top: 0px;
+}

@@ -31,7 +31,11 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         width = plotWidth + margin * 2 + yAxisWidth,
         height = plotHeight + margin * 2 + xAxisHeight * 2;
 
-      const svg = container.select("svg.main")
+      const svg = container.style("height", `${height}px`)
+        .select(".horizontalScrollContainer")
+        .style("width", "500px")
+        .style("left", `${yAxisWidth}px`)
+        .select("svg.main")
         .attr("width", width)
         .attr("height", height);
 
@@ -80,7 +84,11 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .range([plotHeight, 0])
         .domain(rows.reverse())
         .padding(0.05);
-      svg.select(".y-axis")
+      container.select(".yAxisContainer")
+        .select("svg")
+        .attr("width", yAxisWidth)
+        .attr("height", height)
+        .select(".y-axis")
         .call(d3.axisLeft(y))
         .attr("transform", `translate(${margin + yAxisWidth}, 0)`);
 
@@ -129,17 +137,23 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
 
   return (
     <div ref={ref} className="container">
-      <div className="stickyXAxisContainer">
+      <div className='yAxisContainer'>
         <svg>
-          <rect className='background'></rect>
-          <g className="x-axis top" />
+          <g className="y-axis" />
         </svg>
       </div>
-      <svg className="main">
-        <g className="plot-area" />
-        <g className="x-axis bottom" />
-        <g className="y-axis" />
-      </svg>
+      <div className="horizontalScrollContainer">
+        <div className="stickyXAxisContainer">
+          <svg>
+            <rect className='background'></rect>
+            <g className="x-axis top" />
+          </svg>
+        </div>
+        <svg className="main">
+          <g className="plot-area" />
+          <g className="x-axis bottom" />
+        </svg>
+      </div>
       <div className="tooltip"></div>
     </div>
   );
