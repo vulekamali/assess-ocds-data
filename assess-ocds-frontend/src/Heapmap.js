@@ -31,8 +31,12 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         width = plotWidth + margin * 2 + yAxisWidth,
         height = plotHeight + margin * 2 + xAxisHeight * 2;
 
-      const svg = container.style("height", `${height}px`)
-        .select(".horizontalScrollContainer")
+
+      const horizontalScrollContainerEl = container.select(".horizontalScrollContainer").node();
+
+      container.style("height", `${height}px`);
+
+      const svg =  d3.select(horizontalScrollContainerEl)
         .style("width", "500px")
         .style("left", `${yAxisWidth + margin + 1}px`)
         .select("svg.main")
@@ -112,7 +116,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       var mousemove = function (e, d) {
         tooltip
           .html(`${d[rowKey]}<br>${d[colKey]}<br><b>${d[valKey]}`)
-          .style("left", `${xBand(d.date) + margin + yAxisWidth + 0.5 * squareSize}px`)
+          .style("left", `${xBand(d.date) + margin + yAxisWidth + 0.5 * squareSize - horizontalScrollContainerEl.scrollLeft}px`)
           .style("top", (y(d[rowKey]) - squareSize) + "px");
       };
       var mouseleave = function (e, d) {
@@ -132,7 +136,6 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .on("mouseleave", mouseleave)
         .exit().remove();
 
-        const horizontalScrollContainerEl = container.select(".horizontalScrollContainer").node();
         horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
     },
     []
