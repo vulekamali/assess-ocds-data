@@ -1,13 +1,15 @@
 
-import { useD3 } from './hooks/useD3';
 import React from 'react';
 import * as d3 from 'd3';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 export default function Heatmap({ data, rowKey, colKey, valKey }) {
 
-  const ref = useD3(
-    (container) => {
+  const ref = React.useRef();
+
+  React.useEffect(
+    () => {
+      const container = d3.select(ref.current);
 
       data.forEach(d => d.date = new Date(`${d[colKey]}-01T00:00:00`));
 
@@ -142,8 +144,9 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .exit().remove();
 
       horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
+
+      return () => console.log("cleanup function");
     },
-    () => console.log("cleanup function"),
     [data, rowKey, colKey, valKey]
   );
 
