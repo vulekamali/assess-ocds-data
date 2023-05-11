@@ -143,7 +143,8 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
 
       horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
     },
-    []
+    () => console.log("cleanup function"),
+    [data, rowKey, colKey, valKey]
   );
 
   return (
