@@ -4,8 +4,30 @@ import * as d3 from 'd3';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 export default function Heatmap({ data, rowKey, colKey, valKey }) {
+  const [width, setWidth] = React.useState(0);
 
   const ref = React.useRef();
+
+  // Resize
+  React.useEffect(() => {
+    const element = ref?.current;
+
+    if (!element) return;
+
+    const observer = new ResizeObserver((entries) => {
+      entries.forEach(entry => {
+        console.log("element resized", entry.contentRect.width);
+        setWidth(entry.contentRect.width);
+      })
+    });
+
+    observer.observe(element);
+
+    return () => {
+      // Cleanup the observer by unobserving all elements
+      observer.disconnect();
+    };
+  }, [])
 
   React.useEffect(
     () => {
@@ -31,7 +53,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       const yAxisWidth = 170;
       const xAxisHeight = 20;
       const margin = 30,
-        width = plotWidth + margin * 2 + yAxisWidth,
+        scrollContainerWidth = width - 2*margin - yAxisWidth,
         height = plotHeight + margin * 2 + xAxisHeight * 2;
 
 
@@ -40,7 +62,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       const horizontalScrollContainerEl = container.select(".horizontalScrollContainer").node();
 
       const svg = d3.select(horizontalScrollContainerEl)
-        .style("width", "500px")
+        .style("width", `${scrollContainerWidth}px`)
         .style("height", `${plotHeight + xAxisHeight + margin}px`)
         .style("left", `${yAxisWidth + margin + 1}px`)
         .select("svg.main")
@@ -64,7 +86,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       // Create sticky x axis at the top
       container.select(".stickyXAxisContainer")
         .style("top", `0px`)
-        .style("width", "500px")
+        .style("width", `${scrollContainerWidth}px`)
         .style("left", `${yAxisWidth + margin + 1 + 20}px`)
         .select("svg")
         .attr("width", plotWidth)
@@ -147,7 +169,7 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
 
       return () => console.log("cleanup function");
     },
-    [data, rowKey, colKey, valKey]
+    [width, data, rowKey, colKey, valKey]
   );
 
   return (
