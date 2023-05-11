@@ -2,6 +2,7 @@
 import { useD3 } from './hooks/useD3';
 import React from 'react';
 import * as d3 from 'd3';
+import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 export default function Heatmap({ data, rowKey, colKey, valKey }) {
 
@@ -32,16 +33,18 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         height = plotHeight + margin * 2 + xAxisHeight * 2;
 
 
-      const horizontalScrollContainerEl = container.select(".horizontalScrollContainer").node();
-
       container.style("height", `${height}px`);
 
-      const svg =  d3.select(horizontalScrollContainerEl)
+      const horizontalScrollContainerEl = container.select(".horizontalScrollContainer").node();
+
+      const svg = d3.select(horizontalScrollContainerEl)
         .style("width", "500px")
+        .style("height", `${plotHeight + xAxisHeight + margin}px`)
         .style("left", `${yAxisWidth + margin + 1}px`)
         .select("svg.main")
         .attr("width", plotWidth)
-        .attr("height", plotHeight + xAxisHeight*2);
+        .attr("height", plotHeight + xAxisHeight)
+        .style("top", `${xAxisHeight}px`);
 
       const plotArea = svg.select(".plot-area")
         .attr("transform", `translate(0, 0)`);
@@ -59,6 +62,8 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
       // Create sticky x axis at the top
       container.select(".stickyXAxisContainer")
         .style("top", `0px`)
+        .style("width", "500px")
+        .style("left", `${yAxisWidth + margin + 1 + 20}px`)
         .select("svg")
         .attr("width", plotWidth)
         .attr("height", xAxisHeight + margin)
@@ -136,30 +141,42 @@ export default function Heatmap({ data, rowKey, colKey, valKey }) {
         .on("mouseleave", mouseleave)
         .exit().remove();
 
-        horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
+      horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
     },
     []
   );
 
   return (
     <div ref={ref} className="container">
+
+
       <div className='yAxisContainer'>
         <svg>
           <g className="y-axis" />
         </svg>
       </div>
-      <div className="horizontalScrollContainer">
-        <div className="stickyXAxisContainer">
-          <svg>
-            <rect className='background'></rect>
-            <g className="x-axis top" />
-          </svg>
-        </div>
-        <svg className="main">
-          <g className="plot-area" />
-          <g className="x-axis bottom" />
-        </svg>
-      </div>
+      <ScrollSync>
+        <>
+          <div className="stickyXAxisContainer">
+            <ScrollSyncPane>
+              <div className='horizontalScrollXAxisContainer'>
+                <svg>
+                  <rect className='background'></rect>
+                  <g className="x-axis top" />
+                </svg>
+              </div>
+            </ScrollSyncPane>
+          </div>
+          <ScrollSyncPane>
+            <div className="horizontalScrollContainer">
+              <svg className="main">
+                <g className="plot-area" />
+                <g className="x-axis bottom" />
+              </svg>
+            </div>
+          </ScrollSyncPane>
+        </>
+      </ScrollSync>
       <div className="tooltip"></div>
     </div>
   );
