@@ -4,7 +4,7 @@ import {ScrollSync, ScrollSyncPane} from 'react-scroll-sync';
 
 export default function Heatmap({data, rowKey, colKey, valKey}) {
     const [width, setWidth] = React.useState(0);
-    const [legendHeight] = React.useState(200);
+    const [legendHeight] = React.useState(100);
 
     const ref = React.useRef();
 
@@ -177,7 +177,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .on("mouseleave", mouseleave)
                 .exit().remove();
 
-            addLegend(container, myColor);
+            addLegend(container, myColor, [0, max]);
 
             horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
 
@@ -186,50 +186,47 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
         [width, data, rowKey, colKey, valKey]
     );
 
-    const addLegend = (container, myColor) => {
+    const addLegend = (container, myColor, range) => {
         const legendContainer = container.select(".legend-container");
-        var keys = [{
-            label: "Mister A",
-            value: 4
-        }, {
-            label: "Mister B",
-            value: 22
-        }, {
-            label: "Mister C",
-            value: 42
-        }, {
-            label: "Mister D",
-            value: 17
-        }]
+
+        console.log({'range': d3.scaleSequential().domain([0, 4]).range(range)(0)})
+        const legendVals = []
+        for (let i = 0; i <= 4; i++) {
+            legendVals.push({
+                key: i,
+                value: d3.scaleSequential().domain([0, 4]).range(range)(i),
+            })
+        }
+
         // Add one dot in the legend for each name.
-        var size = 20
+        const size = {height: 20, width: 50}
         legendContainer.selectAll("mydots")
-            .data(keys)
+            .data(legendVals)
             .enter()
             .append("rect")
-            .attr("x", 100)
-            .attr("y", function (d, i) {
-                return 100 + i * (size + 5)
-            }) // 100 is where the first dot appears. 25 is the distance between dots
-            .attr("width", size)
-            .attr("height", size)
+            .attr("x", function (d, i) {
+                return 40 + i * (size.width + 5)
+            })
+            .attr("y", 40)
+            .attr("width", size.width)
+            .attr("height", size.height)
             .style("fill", function (d) {
                 return myColor(d.value)
             })
+
         // Add one dot in the legend for each name.
         legendContainer.selectAll("mylabels")
-            .data(keys)
+            .data(legendVals)
             .enter()
             .append("text")
-            .attr("x", 100 + size * 1.2)
-            .attr("y", function (d, i) {
-                return 100 + i * (size + 5) + (size / 2)
-            }) // 100 is where the first dot appears. 25 is the distance between dots
-            .style("fill", function (d) {
-                return "#333"
+            .attr("x", function (d, i) {
+                return 40 + i * (size.width + 5)
             })
+            .attr("y", size.height + 55) // 100 is where the first dot appears. 25 is the distance between dots
+            .attr("fill", "#34495e")
+            .attr("width", "100px")
             .text(function (d) {
-                return d.label
+                return d.value
             })
             .attr("text-anchor", "left")
             .style("alignment-baseline", "middle")

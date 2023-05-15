@@ -32,6 +32,12 @@ body {
     padding-right: 10px;
 }
 
+.legend-container {
+    border-radius: 5px;
+    background-color: #82ccdd;
+    width: 350px;
+}
+
 /**** Z-INDEX SIBLINGS ******/
 .tooltip {
     z-index: 30;
