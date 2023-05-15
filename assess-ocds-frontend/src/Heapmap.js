@@ -4,6 +4,7 @@ import {ScrollSync, ScrollSyncPane} from 'react-scroll-sync';
 
 export default function Heatmap({data, rowKey, colKey, valKey}) {
     const [width, setWidth] = React.useState(0);
+    const [legendHeight] = React.useState(200);
 
     const ref = React.useRef();
 
@@ -120,7 +121,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .attr("width", margin + yAxisWidth + 2)
                 .attr("height", height)
                 .style("position", "relative")
-                .style("top", `${xAxisHeight + margin}px`)
+                .style("top", `${xAxisHeight + margin + legendHeight}px`)
                 .select(".y-axis")
                 .call(d3.axisLeft(y))
                 .attr("transform", `translate(${margin + yAxisWidth}, 0)`);
@@ -129,9 +130,9 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .each(function (textValue, i) {
                     replaceTextElements(this, textValue, yAxisWidth);
                 });
-                container.select(".yAxisContainer")
+            container.select(".yAxisContainer")
                 .selectAll('foreignObject')
-                .each((function() {
+                .each((function () {
                     updateForeignObject(d3.select(this), yAxisWidth);
                 }));
 
@@ -176,6 +177,8 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .on("mouseleave", mouseleave)
                 .exit().remove();
 
+            addLegend(container, myColor);
+
             horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
 
             return () => console.log("cleanup function");
@@ -183,9 +186,58 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
         [width, data, rowKey, colKey, valKey]
     );
 
+    const addLegend = (container, myColor) => {
+        const legendContainer = container.select(".legend-container");
+        var keys = [{
+            label: "Mister A",
+            value: 4
+        }, {
+            label: "Mister B",
+            value: 22
+        }, {
+            label: "Mister C",
+            value: 42
+        }, {
+            label: "Mister D",
+            value: 17
+        }]
+        // Add one dot in the legend for each name.
+        var size = 20
+        legendContainer.selectAll("mydots")
+            .data(keys)
+            .enter()
+            .append("rect")
+            .attr("x", 100)
+            .attr("y", function (d, i) {
+                return 100 + i * (size + 5)
+            }) // 100 is where the first dot appears. 25 is the distance between dots
+            .attr("width", size)
+            .attr("height", size)
+            .style("fill", function (d) {
+                return myColor(d.value)
+            })
+        // Add one dot in the legend for each name.
+        legendContainer.selectAll("mylabels")
+            .data(keys)
+            .enter()
+            .append("text")
+            .attr("x", 100 + size * 1.2)
+            .attr("y", function (d, i) {
+                return 100 + i * (size + 5) + (size / 2)
+            }) // 100 is where the first dot appears. 25 is the distance between dots
+            .style("fill", function (d) {
+                return "#333"
+            })
+            .text(function (d) {
+                return d.label
+            })
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle")
+    }
+
     return (
         <div ref={ref} className="container">
-
+            <svg className="legend-container" style={{height: legendHeight}}></svg>
 
             <div className='yAxisContainer'>
                 <svg>
@@ -220,19 +272,19 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
 }
 
 const replaceTextElements = function (textElement, textValue) {
-  const el = d3.select(textElement);
-  const p = d3.select(textElement.parentNode);
-  const foreignObject = p.append("foreignObject");
-  foreignObject.append("xhtml:p")
-      .attr("class", "wrapAndTruncate")
-      .html(textValue);
-  el.remove();
+    const el = d3.select(textElement);
+    const p = d3.select(textElement.parentNode);
+    const foreignObject = p.append("foreignObject");
+    foreignObject.append("xhtml:p")
+        .attr("class", "wrap-and-truncate")
+        .html(textValue);
+    el.remove();
 };
 
-const updateForeignObject = function(foreignObject, width) {
-  const xpadding = 10;
-  foreignObject.attr('x', -1 * (width + xpadding))
-      .attr('y', -5)
-      .attr("width", width)
-      .attr("height", 25)
+const updateForeignObject = function (foreignObject, width) {
+    const xpadding = 10;
+    foreignObject.attr('x', -1 * (width + xpadding))
+        .attr('y', -5)
+        .attr("width", width)
+        .attr("height", 25)
 }

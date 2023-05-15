@@ -21,7 +21,7 @@ body {
     left: 0px;
 }
 
-.wrapAndTruncate {
+.wrap-and-truncate {
     word-wrap: break-word;
     text-align: right;
     margin-top: 0px;
@@ -29,6 +29,7 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
     display: -webkit-box;
+    padding-right: 10px;
 }
 
 /**** Z-INDEX SIBLINGS ******/
