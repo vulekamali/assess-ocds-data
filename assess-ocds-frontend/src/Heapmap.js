@@ -49,7 +49,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
             const plotWidth = (filledCols.length + 1) * squareSize;
 
             const plotHeight = rows.length * squareSize;
-            const yAxisWidth = 60;
+            const yAxisWidth = width > 600 ? 170 : width / 3;
             const xAxisHeight = 20;
             const margin = 30,
                 scrollContainerWidth = width - 2 * margin - yAxisWidth,
@@ -124,6 +124,16 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .select(".y-axis")
                 .call(d3.axisLeft(y))
                 .attr("transform", `translate(${margin + yAxisWidth}, 0)`);
+            container.select(".yAxisContainer")
+                .selectAll('text')
+                .each(function (textValue, i) {
+                    replaceTextElements(this, textValue, yAxisWidth);
+                });
+                container.select(".yAxisContainer")
+                .selectAll('foreignObject')
+                .each((function() {
+                    updateForeignObject(d3.select(this), yAxisWidth);
+                }));
 
             const values = data.map((d) => d[valKey]);
             const max = d3.max(values);
@@ -166,35 +176,12 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .on("mouseleave", mouseleave)
                 .exit().remove();
 
-            container.select(".yAxisContainer")
-                .selectAll('text')
-                .each(function (d, i) {
-                    insertLinebreaks(this, d, 60);
-                });
-
             horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
 
             return () => console.log("cleanup function");
         },
         [width, data, rowKey, colKey, valKey]
     );
-
-    const insertLinebreaks = function (t, d, width) {
-        const el = d3.select(t);
-        const p = d3.select(t.parentNode);
-        const xpadding = 10;
-        p.append("foreignObject")
-            .attr('x', -1 * (width + xpadding))
-            .attr('y', -5)
-            .attr("width", width)
-            .attr("height", 25)
-            .append("xhtml:p")
-            .attr("class", "wrapAndTruncate")
-            .html(d);
-
-        el.remove();
-
-    };
 
     return (
         <div ref={ref} className="container">
@@ -232,6 +219,20 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
     );
 }
 
-const yearMonthToDate = (yearMonth) => {
-    return new Date(yearMonth);
+const replaceTextElements = function (textElement, textValue) {
+  const el = d3.select(textElement);
+  const p = d3.select(textElement.parentNode);
+  const foreignObject = p.append("foreignObject");
+  foreignObject.append("xhtml:p")
+      .attr("class", "wrapAndTruncate")
+      .html(textValue);
+  el.remove();
+};
+
+const updateForeignObject = function(foreignObject, width) {
+  const xpadding = 10;
+  foreignObject.attr('x', -1 * (width + xpadding))
+      .attr('y', -5)
+      .attr("width", width)
+      .attr("height", 25)
 }
