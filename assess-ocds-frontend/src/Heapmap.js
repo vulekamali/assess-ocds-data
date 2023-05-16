@@ -55,6 +55,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
             const margin = 30,
                 scrollContainerWidth = width - 2 * margin - yAxisWidth,
                 height = plotHeight + margin * 2 + xAxisHeight * 2;
+            const legendContainerHeight = 100;
 
 
             container.style("height", `${height}px`);
@@ -137,12 +138,13 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 }));
 
             const values = data.map((d) => d[valKey]);
+            const min = d3.min(values);
             const max = d3.max(values);
 
             // Build color scale
             const myColor = d3.scaleLinear()
                 .range(["#eee", "#000"])
-                .domain([0, max]);
+                .domain([min, max]);
 
             // create a tooltip
             var tooltip = container.select(".tooltip")
@@ -156,7 +158,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 tooltip
                     .html(`${d[rowKey]}<br>${d[colKey]}<br><b>${d[valKey]}`)
                     .style("left", `${xBand(d.date) + margin + yAxisWidth + 0.5 * squareSize - horizontalScrollContainerEl.scrollLeft}px`)
-                    .style("top", (y(d[rowKey]) - squareSize) + "px");
+                    .style("top", (y(d[rowKey]) - (0.33 * squareSize) + legendContainerHeight) + "px");
             };
             var mouseleave = function (e, d) {
                 tooltip.style("display", "none")
@@ -177,7 +179,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
                 .on("mouseleave", mouseleave)
                 .exit().remove();
 
-            addLegend(container, myColor, [0, max]);
+            addLegend(container, myColor, [min, max]);
 
             horizontalScrollContainerEl.scrollLeft = horizontalScrollContainerEl.scrollWidth;
 
@@ -189,7 +191,6 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
     const addLegend = (container, myColor, range) => {
         const legendContainer = container.select(".legend-container");
 
-        console.log({'range': d3.scaleSequential().domain([0, 4]).range(range)(0)})
         const legendVals = []
         for (let i = 0; i <= 4; i++) {
             legendVals.push({
@@ -226,10 +227,15 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
             .attr("fill", "#34495e")
             .attr("width", "100px")
             .text(function (d) {
-                return d.value
+                return Math.round(d.value)
             })
             .attr("text-anchor", "left")
-            .style("alignment-baseline", "middle")
+            .style("alignment-baseline", "middle");
+
+        legendContainer.append("text")
+        .attr("x", 40)
+        .attr("y", 30)
+        .text("Number of procurement processes");
     }
 
     return (
