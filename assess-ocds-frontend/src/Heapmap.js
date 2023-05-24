@@ -190,6 +190,7 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
 
     const addLegend = (container, myColor, range) => {
         const legendContainer = container.select(".legend-container");
+        legendContainer.selectAll('*').remove();
 
         const legendVals = []
         for (let i = 0; i <= 4; i++) {
@@ -233,14 +234,16 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
             .style("alignment-baseline", "middle");
 
         legendContainer.append("text")
-        .attr("x", 40)
-        .attr("y", 30)
-        .text("Number of procurement processes");
+            .attr("x", 40)
+            .attr("y", 30)
+            .text("Number of procurement processes");
     }
 
     return (
         <div ref={ref} className="container">
-            <svg className="legend-container" style={{height: legendHeight}}></svg>
+            <svg className="legend-container" style={{height: legendHeight}}>
+                <circle></circle>
+            </svg>
 
             <div className='yAxisContainer'>
                 <svg>
