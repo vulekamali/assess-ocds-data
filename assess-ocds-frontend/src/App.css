@@ -35,7 +35,12 @@ body {
 .legend-container {
     border-radius: 5px;
     background-color: #fff;
-    width: 350px;
+
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 99;
 }
 
 /**** Z-INDEX SIBLINGS ******/
@@ -55,6 +60,7 @@ body {
     height: 50px;
     background-color: white;
     z-index: 20;
+    top: 70px
 }
 
 .horizontalScrollContainer {

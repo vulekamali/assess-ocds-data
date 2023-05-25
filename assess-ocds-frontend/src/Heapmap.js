@@ -86,13 +86,11 @@ export default function Heatmap({data, rowKey, colKey, valKey}) {
 
             // Create sticky x axis at the top
             container.select(".stickyXAxisContainer")
-                .style("top", `0px`)
                 .style("width", `${scrollContainerWidth}px`)
                 .style("left", `${yAxisWidth + margin + 1 + 20}px`)
                 .select("svg")
                 .attr("width", plotWidth)
                 .attr("height", xAxisHeight + margin)
-                .style("top", "0px")
                 .select(".x-axis.top")
                 .attr("transform", `translate(0, ${xAxisHeight - 2 + margin})`)
                 .call(d3.axisTop(xBand)
