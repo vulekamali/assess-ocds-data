@@ -21,7 +21,7 @@ body {
     left: 0px;
 }
 
-.wrapAndTruncate {
+.wrap-and-truncate {
     word-wrap: break-word;
     text-align: right;
     margin-top: 0px;
@@ -29,6 +29,18 @@ body {
     -webkit-box-orient: vertical;
     overflow: hidden;
     display: -webkit-box;
+    padding-right: 10px;
+}
+
+.legend-container {
+    border-radius: 5px;
+    background-color: #fff;
+
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    z-index: 99;
 }
 
 /**** Z-INDEX SIBLINGS ******/
@@ -48,6 +60,7 @@ body {
     height: 50px;
     background-color: white;
     z-index: 20;
+    top: 70px
 }
 
 .horizontalScrollContainer {
